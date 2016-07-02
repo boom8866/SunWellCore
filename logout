@@ -1,0 +1,29 @@
+src\server\game\Entities\Pet
+
+@@ -111,6 +111,7 @@ void Pet::RemoveFromWorld()
+
+ bool Pet::LoadPetFromDB(Player* owner, uint8 asynchLoadType, uint32 petentry, uint32 petnumber, bool current, AsynchPetSummon* info)
+ { 
++    bool m_loading = true;
+
+    // we are loading pet at that moment
+    if (owner->IsSpectator() || owner->GetPet() || !owner->IsInWorld() || !owner->FindMap())
+        return false;
+... ...
+@@ -121,6 +122,7 @@ bool Pet::LoadPetFromDB(Player* owner, uint8 asynchLoadType, uint32 petentry, ui
+
+     uint32 ownerid = owner->GetGUIDLow();
+     PreparedStatement* stmt;
++    PreparedQueryResult result;
+
+     if (petnumber)
+     {
+... ...
+@@ -161,6 +163,7 @@ bool Pet::LoadPetFromDB(Player* owner, uint8 asynchLoadType, uint32 petentry, ui
+    owner->GetSession()->_loadPetFromDBFirstCallback.SetSecondParam(info);
+    owner->GetSession()->_loadPetFromDBFirstCallback.SetFutureResult(CharacterDatabase.AsyncQuery(stmt));
+    return true;
++    m_loading = false;
+ }
+
+ void Pet::SavePetToDB(PetSaveMode mode, bool logout)
